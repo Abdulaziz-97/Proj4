@@ -2,11 +2,15 @@
 Account Management Tools for UDA-Hub
 Provides tools for user account lookups and operations
 """
+# pyright: reportMissingImports=false
+# pyright: reportGeneralTypeIssues=false
 
 import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from typing import Any, cast
+from sqlalchemy.orm import Session
 from langchain_core.tools import tool
 
 # Add parent directories to path for imports
@@ -14,8 +18,8 @@ current_dir = Path(__file__).resolve().parent
 project_root = current_dir.parent.parent
 sys.path.insert(0, str(project_root))
 
-from data.models import cultpass
-from agentic.tools.db_manager import get_db_manager
+from data.models import cultpass  # type: ignore[import]
+from agentic.tools.db_manager import get_db_manager  # type: ignore[import]
 
 
 @tool
@@ -44,7 +48,8 @@ def lookup_user_account(user_id: str) -> str:
     try:
         db_manager = get_db_manager()
         
-        with db_manager.get_cultpass_session() as session:
+        with db_manager.get_cultpass_session() as _session:
+            session = cast(Session, _session)
             # Query user
             user = session.query(cultpass.User).filter_by(user_id=user_id).first()
             
@@ -72,7 +77,7 @@ def lookup_user_account(user_id: str) -> str:
             active_reservations = len([r for r in user.reservations if r.status == "reserved"])
             
             # Build response
-            result = {
+            result: dict[str, Any] = {
                 "found": True,
                 "user_id": user.user_id,
                 "full_name": user.full_name,
@@ -85,11 +90,12 @@ def lookup_user_account(user_id: str) -> str:
             }
             
             # Add alerts
+            alerts = cast(list[str], result["alerts"])
             if user.is_blocked:
-                result["alerts"].append("USER_IS_BLOCKED - ESCALATE TO HUMAN SUPPORT")
+                alerts.append("USER_IS_BLOCKED - ESCALATE TO HUMAN SUPPORT")
             
-            if subscription_data and subscription_data["status"] == "cancelled":
-                result["alerts"].append("SUBSCRIPTION_CANCELLED")
+            if isinstance(subscription_data, dict) and subscription_data.get("status") == "cancelled":
+                alerts.append("SUBSCRIPTION_CANCELLED")
             
             return json.dumps(result, indent=2)
             
@@ -291,8 +297,9 @@ def cancel_reservation(reservation_id: str) -> str:
             experience_date = str(reservation.experience.when)
             
             # Update status
-            reservation.status = "cancelled"
-            reservation.updated_at = datetime.now()
+            res_obj = cast(Any, reservation)
+            res_obj.status = "cancelled"
+            res_obj.updated_at = datetime.now()
             
             session.commit()
             
@@ -355,15 +362,16 @@ def update_subscription_status(subscription_id: str, action: str) -> str:
             old_status = subscription.status
             
             # Update status based on action
+            sub_obj = cast(Any, subscription)
             if action == "cancel":
-                subscription.status = "cancelled"
-                subscription.ended_at = datetime.now()
+                sub_obj.status = "cancelled"
+                sub_obj.ended_at = datetime.now()
                 message = "Subscription cancelled. Takes effect at end of billing cycle."
             else:  # pause
-                subscription.status = "paused"
+                sub_obj.status = "paused"
                 message = "Subscription paused. User data preserved for reactivation."
             
-            subscription.updated_at = datetime.now()
+            sub_obj.updated_at = datetime.now()
             session.commit()
             
             return json.dumps({

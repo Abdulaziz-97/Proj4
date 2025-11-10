@@ -3,12 +3,11 @@ Database Manager for UDA-Hub Multi-Agent System
 Handles connections to both CultPass and UdaHub databases
 """
 
-import os
 from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from contextlib import contextmanager
-from typing import Optional
+from typing import Optional, Generator, cast
 
 
 class DatabaseManager:
@@ -24,11 +23,11 @@ class DatabaseManager:
         if base_path is None:
             # Auto-detect base path (assuming we're in agentic/tools/)
             current_file = Path(__file__).resolve()
-            base_path = current_file.parent.parent.parent
+            base_path_path = current_file.parent.parent.parent
         else:
-            base_path = Path(base_path)
+            base_path_path = Path(cast(str, base_path))
         
-        self.base_path = Path(base_path)
+        self.base_path = base_path_path
         
         # Database paths
         self.cultpass_db_path = self.base_path / "data" / "external" / "cultpass.db"
@@ -49,7 +48,7 @@ class DatabaseManager:
         self.UdaHubSession = sessionmaker(bind=self.udahub_engine)
     
     @contextmanager
-    def get_cultpass_session(self) -> Session:
+    def get_cultpass_session(self) -> Generator[Session, None, None]:
         """Get a CultPass database session with automatic commit/rollback"""
         session = self.CultPassSession()
         try:
@@ -62,7 +61,7 @@ class DatabaseManager:
             session.close()
     
     @contextmanager
-    def get_udahub_session(self) -> Session:
+    def get_udahub_session(self) -> Generator[Session, None, None]:
         """Get a UdaHub database session with automatic commit/rollback"""
         session = self.UdaHubSession()
         try:
@@ -85,7 +84,7 @@ _db_manager = None
 
 def get_db_manager(base_path: Optional[str] = None) -> DatabaseManager:
     """Get or create global database manager instance"""
-    global _db_manager
+    global _db_manager  # noqa: PLW0603
     if _db_manager is None:
         _db_manager = DatabaseManager(base_path)
     return _db_manager

@@ -17,7 +17,7 @@
 
 ### **Documentation**
 ```
-✅ agentic/design/architecture.md  - Your architecture (update as needed)
+✅ agentic/design/architecture.md  - Architecture
 ✅ agentic/tools/README.md         - Complete tool docs
 ✅ utils.py                        - Helper functions
 ✅ data/external/                  - 14 knowledge articles

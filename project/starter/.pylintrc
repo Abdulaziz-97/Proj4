@@ -1,0 +1,8 @@
+[MESSAGES CONTROL]
+disable=
+    broad-except,
+    wrong-import-position,
+    import-error,
+    no-member,
+    unsubscriptable-object
+
