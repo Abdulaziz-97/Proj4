@@ -1,35 +1,42 @@
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
-from dotenv import load_dotenv
+from langchain_core.messages import SystemMessage
 from agentic.tools import KNOWLEDGE_TOOLS
-import os
-load_dotenv()
 
-api_key = os.getenv("OPENAI_API_KEY")
-base_url = os.getenv("OPENAI_BASE_URL")
+
 def create_knowledge_agent(llm: ChatOpenAI):
-    """Searches the knowledge base for relevant articles"""
-    system_prompt = """
-    You are a knowledge agent.
-    You are responsible for searching the knowledge base for relevant articles.
-    You are also responsible for returning the most relevant article to the user.
-    You have the following tools available to you:
-    {KNOWLEDGE_TOOLS}
-    You should use the tools to search the knowledge base for relevant articles.
-    You should then return the most relevant article to the user.
-    You should also return the confidence score for the article.
-    You should also return the article id for the article.
-    You should also return the article title for the article.
-    You should also return the article content for the article.
-    You should also return the article url for the article.
     """
-   
-   
+    Creates a knowledge base agent that searches and retrieves
+    relevant support articles.
+    """
+    system_prompt = SystemMessage(content="""
+You are a knowledge base specialist for CultPass customer support.
+
+**Your Tools:**
+- search_knowledge_base: Search for relevant articles by query
+- get_article_by_id: Retrieve full article details by ID
+- list_knowledge_categories: See available categories
+
+**Your Process:**
+1. Understand the customer's issue from the ticket
+2. Use search_knowledge_base with relevant keywords
+3. Review the confidence scores and article summaries
+4. If confidence > 0.7: Formulate a helpful response using the article content
+5. If confidence < 0.7: Recommend escalation due to lack of relevant information
+
+**Response Guidelines:**
+- Be clear, concise, and helpful
+- Reference the article you're using
+- Provide step-by-step instructions when applicable
+- If unsure, admit it and recommend escalation
+- Always maintain a professional, friendly tone
+
+Your goal is to resolve tickets quickly using knowledge base articles.
+""")
+    
     return create_react_agent(
-        llm=llm,
+        name="knowledge",
+        model=llm,
         tools=KNOWLEDGE_TOOLS,
-        state_modifier=system_prompt,
-        api_key=api_key,
-        base_url=base_url,
-        model="gpt-4o-mini",
+        prompt=system_prompt,
     )

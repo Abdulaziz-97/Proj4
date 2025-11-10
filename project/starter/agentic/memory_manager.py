@@ -10,11 +10,6 @@ from datetime import datetime
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from langgraph.checkpoint.memory import MemorySaver
 
-import sys
-from pathlib import Path
-project_root = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(project_root))
-
 from agentic.tools.memory_tools import get_user_ticket_history
 
 
@@ -63,6 +58,25 @@ class MemoryManager:
                 "session_started": datetime.now().isoformat()
             }
         }
+    
+    def get_conversation_history(
+        self, 
+        ticket_id: str, 
+        limit: Optional[int] = None
+    ) -> List[BaseMessage]:
+        """
+        Retrieve conversation history for a ticket (short-term memory).
+        
+        Args:
+            ticket_id: Ticket ID
+            limit: Max number of messages to retrieve
+            
+        Returns:
+            List of messages in conversation
+        """
+        # In actual implementation, this would retrieve from checkpointer
+        # For now, return empty list (checkpointer handles this automatically)
+        return []
     
     # ============= LONG-TERM MEMORY (Persistent) =============
     
@@ -158,7 +172,7 @@ class MemoryManager:
             # Check for recurring issues
             issue_types = [t.get('main_issue_type') for t in tickets if t.get('main_issue_type')]
             if len(issue_types) > 1 and len(set(issue_types)) < len(issue_types):
-                context_parts.append("WARNING: RECURRING ISSUE DETECTED")
+                context_parts.append("⚠️ RECURRING ISSUE DETECTED")
             
             context_message = SystemMessage(content="\n".join(context_parts))
             
@@ -223,6 +237,92 @@ class MemoryManager:
         except Exception as e:
             print(f"Error storing interaction: {e}")
             return False
+    
+    # ============= MEMORY ANALYSIS =============
+    
+    def analyze_user_patterns(self, user_id: str) -> Dict[str, Any]:
+        """
+        Analyze user's interaction patterns from history.
+        
+        Identifies:
+        - Most common issues
+        - Escalation frequency
+        - Average resolution time
+        
+        Args:
+            user_id: User ID to analyze
+            
+        Returns:
+            Dictionary with pattern analysis
+        """
+        history = self.get_user_history(user_id, limit=10)
+        
+        if not history.get("found", False):
+            return {
+                "user_id": user_id,
+                "has_history": False
+            }
+        
+        tickets = history.get("tickets", [])
+        
+        # Analyze issue types
+        issue_types = [t.get("main_issue_type") for t in tickets if t.get("main_issue_type")]
+        issue_counts = {}
+        for issue in issue_types:
+            issue_counts[issue] = issue_counts.get(issue, 0) + 1
+        
+        # Count escalations
+        escalations = sum(1 for t in tickets if t.get("status") == "escalated")
+        
+        return {
+            "user_id": user_id,
+            "has_history": True,
+            "total_tickets": len(tickets),
+            "common_issues": issue_counts,
+            "most_common_issue": max(issue_counts, key=issue_counts.get) if issue_counts else None,
+            "escalation_rate": escalations / len(tickets) if tickets else 0,
+            "is_frequent_user": len(tickets) > 5,
+            "has_recurring_issues": len(set(issue_types)) < len(issue_types) if issue_types else False
+        }
+    
+    def get_memory_summary(self, ticket_id: str, user_id: str) -> str:
+        """
+        Generate human-readable memory summary for debugging/logging.
+        
+        Args:
+            ticket_id: Current ticket ID
+            user_id: User ID
+            
+        Returns:
+            Formatted string summarizing memory state
+        """
+        summary_parts = [
+            f"=== Memory Summary for Ticket {ticket_id} ===",
+            f"User ID: {user_id}",
+            ""
+        ]
+        
+        # Short-term memory info
+        summary_parts.append("Short-term Memory (Session):")
+        summary_parts.append(f"  Thread ID: {ticket_id}")
+        summary_parts.append(f"  Checkpointer: {'Enabled' if self.checkpointer else 'Disabled'}")
+        summary_parts.append("")
+        
+        # Long-term memory info
+        history = self.get_user_history(user_id, limit=5)
+        summary_parts.append("Long-term Memory (User History):")
+        if history.get("found", False):
+            summary_parts.append(f"  Previous tickets: {len(history.get('tickets', []))}")
+            
+            patterns = self.analyze_user_patterns(user_id)
+            if patterns.get("most_common_issue"):
+                summary_parts.append(f"  Most common issue: {patterns['most_common_issue']}")
+            if patterns.get("has_recurring_issues"):
+                summary_parts.append(f"  ⚠️ Has recurring issues")
+        else:
+            summary_parts.append("  No previous history found")
+        
+        return "\n".join(summary_parts)
 
 
 # Global memory manager instance

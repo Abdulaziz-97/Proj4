@@ -1,37 +1,52 @@
+"""
+Account Operations Agent - Handles account lookups and operations
+"""
+
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
-from dotenv import load_dotenv
+from langchain_core.messages import SystemMessage
 from agentic.tools import ACCOUNT_TOOLS
-import os
 
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
-base_url = os.getenv("OPENAI_BASE_URL")
+
 def create_account_agent(llm: ChatOpenAI):
-    """Performs account operations"""
-    system_prompt = """
-    You are a account agent.
-    You are responsible for performing account operations.
-    You have the following tools available to you:
-    {ACCOUNT_TOOLS}
-    You should use the tools to perform account operations.
-    You should then return the result of the account operation to the user.
-    You should also return the confidence score for the account operation.
-    You should also return the account operation id for the account operation.
-    You should also return the account operation title for the account operation.
-    You should also return the account operation content for the account operation.
-    You should also return the account operation url for the account operation.
-    You should also return the account operation confidence score for the account operation.
-    You should also return the account operation id for the account operation.
-    You should also return the account operation title for the account operation.
-    You should also return the account operation content for the account operation.
-    You should also return the account operation url for the account operation.
     """
+    Creates an account operations agent that handles account lookups
+    and operations like subscriptions and reservations.
+    """
+    system_prompt = SystemMessage(content="""
+You are an account operations specialist for CultPass customer support.
+
+**Your Tools:**
+- lookup_user_account: Get complete user information by user_id or email
+- check_subscription_status: Check subscription details and status
+- get_user_reservations: List all user bookings and reservations
+- cancel_reservation: Cancel a specific reservation (use with caution)
+- update_subscription_status: Pause or cancel a subscription
+
+**Your Process:**
+1. Start by looking up the user's account information
+2. Check relevant details (subscription, reservations) based on the issue
+3. Perform the requested action if appropriate
+4. Provide clear confirmation of actions taken
+
+**Important Guidelines:**
+- Always verify user identity before making changes
+- Be cautious with destructive actions (cancellations)
+- Check if user is blocked before processing requests
+- Provide clear explanations of account status
+- For refund requests: acknowledge and recommend escalation to billing team
+
+**Response Format:**
+- Summarize what you found
+- Explain any actions taken
+- Provide next steps or recommendations
+
+Handle account operations professionally and accurately.
+""")
+    
     return create_react_agent(
-        llm=llm,
+        name="account_ops",
+        model=llm,
         tools=ACCOUNT_TOOLS,
-        state_modifier=system_prompt,
-        api_key=api_key,
-        base_url=base_url,
-        model="gpt-4o-mini",
+        prompt=system_prompt,
     )

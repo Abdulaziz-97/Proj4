@@ -193,6 +193,16 @@ def should_escalate(state: SupportTicketState) -> bool:
     return False
 
 
+# Example state transitions
+STATE_TRANSITIONS = {
+    "initialized": ["classification"],
+    "classification": ["knowledge_retrieval", "account_lookup", "escalation"],
+    "knowledge_retrieval": ["resolved", "escalation"],
+    "account_lookup": ["resolved", "escalation"],
+    "escalation": ["escalated"]
+}
+
+
 # State validation
 def validate_state(state: SupportTicketState) -> tuple[bool, Optional[str]]:
     """

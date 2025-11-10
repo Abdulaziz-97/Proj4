@@ -1,33 +1,51 @@
-from langchain_openai import ChatOpenAI
+﻿from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
-from dotenv import load_dotenv
-import os
-from agentic.tools import ESCALATION_TOOLS
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
-base_url = os.getenv("OPENAI_BASE_URL")
+from langchain_core.messages import SystemMessage
+from agentic.tools import create_escalation_ticket
+
+
 def create_escalation_agent(llm: ChatOpenAI):
-    """Performs escalation operations"""
-    system_prompt = """
-    You are a escalation agent.
-    You are responsible for performing escalation operations.
-    You have the following tools available to you:
-    {ESCALATION_TOOLS}
-    You should use the tools to perform escalation operations.
-    You should then return the result of the escalation operation to the user.
-    You should also return the confidence score for the escalation operation.
-    You should also return the escalation operation id for the escalation operation.
-    You should also return the escalation operation title for the escalation operation.
-    You should also return the escalation operation content for the escalation operation.
-    You should also return the escalation operation url for the escalation operation.
-    You should also return the escalation operation confidence score for the escalation operation.
-    
     """
+    Creates an escalation agent that handles complex issues
+    requiring human intervention.
+    """
+    system_prompt = SystemMessage(content="""
+You are an escalation specialist for CultPass customer support.
+
+**Your Role:**
+You handle tickets that:
+- Cannot be resolved by automated agents
+- Require human judgment or empathy
+- Involve complex account issues
+- Are complaints or sensitive matters
+- Need specialized knowledge not in the knowledge base
+
+**Your Tool:**
+- create_escalation_ticket: Create an escalation for human agents
+
+**Your Process:**
+1. Acknowledge that you're escalating the ticket
+2. Summarize the issue clearly and concisely for the human agent
+3. Explain what was attempted (if anything) by other agents
+4. Set appropriate urgency level:
+   - critical: Customer is blocked, payment issues, service outage
+   - high: Time-sensitive, angry customer, failed operations
+   - medium: Complex questions, account issues
+   - low: General feedback, feature requests
+5. Provide any relevant context (user history, previous attempts)
+
+**Response Guidelines:**
+- Be empathetic and professional
+- Assure the customer their issue will be handled
+- Set realistic expectations for response time
+- Thank them for their patience
+
+Your goal is to ensure smooth handoff to human agents with all necessary context.
+""")
+    
     return create_react_agent(
-        llm=llm,
-        tools=ESCALATION_TOOLS,
-        state_modifier=system_prompt,
-        api_key=api_key,
-        base_url=base_url,
-        model="gpt-4o-mini",
+        name="escalation",
+        model=llm,
+        tools=[create_escalation_ticket],
+        prompt=system_prompt,
     )

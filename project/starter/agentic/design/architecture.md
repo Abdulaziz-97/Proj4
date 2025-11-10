@@ -1,173 +1,103 @@
-# UDA-Hub Multi-Agent Architecture
+﻿## Multiâ€‘Agent Customer Support Architecture (Supervisor Pattern)
 
-## System Purpose
-Intelligent customer support ticket resolution system for CultPass using multi-agent orchestration with LangGraph.
+### Overview
+The system uses LangGraphâ€™s Supervisor pattern to orchestrate specialized agents for customer support. A central Supervisor routes tickets to the most appropriate agent, collects results, and ensures completion or escalation.
 
-## Design Pattern
-Supervisor Pattern with Specialized Workers
+### Agents and Responsibilities
+- **Classifier**: Classifies incoming tickets by category and urgency, extracts keywords, and suggests the next agent.
+- **Knowledge**: Searches the knowledge base using tools and answers from articles. Escalates when confidence is low.
+- **Account Ops**: Performs account lookups, subscription checks, and reservation management via tools. Escalates when blocked/refund or risky actions.
+- **Escalation**: Creates escalation tickets with a clear summary and context for human agents.
 
-## Key Design Decisions
-- **Why supervisor pattern?** [explain your reasoning]
-- **How many agents?** [explain your choice]
-- **What triggers escalation?** [define criteria]
+### Escalation Agent (Details)
+- **Triggers**:
+  - Confidence from knowledge retrieval < 0.5 or no relevant articles found
+  - Refund/charge dispute language
+  - Blocked or risky account flags from account tools
+  - Critical urgency or repeated failures across agents
+- **Actions**:
+  - Summarize the issue, attempted steps, and urgency
+  - Create escalation via `create_escalation_ticket`
+  - Hand back to Supervisor with escalation confirmation
+- **Outputs**:
+  - Human-readable confirmation for the customer
+  - Structured escalation ticket in the core DB
 
----
+### Data and Tools
+- Databases: `cultpass.db` (external) and `udahub.db` (core). ORM via SQLAlchemy.
+- Tools:
+  - Knowledge tools: `search_knowledge_base`, `get_article_by_id`, `list_knowledge_categories`.
+  - Account tools: `lookup_user_account`, `check_subscription_status`, `get_user_reservations`, `cancel_reservation`, `update_subscription_status`.
+  - Escalation tool: `create_escalation_ticket`.
 
-## Agent 1: Supervisor/Orchestrator
+### Memory and State
+- Shortâ€‘term memory: LangGraph `MemorySaver` checkpointer with `thread_id` for perâ€‘ticket sessions.
+- Longâ€‘term memory: Stored in core DB (ticket history, preferences). Accessed via memory tools or manager.
 
-**Role:** Receives ticket, routes to appropriate worker, aggregates responses
+#### State Management
+Unified state structure (`SupportTicketState`) flows between steps and accumulates context and decisions:
+- Messages (LangGraph history)
+- Ticket info (ticket_id, user_id, channel)
+- Classification (category, urgency, keywords, recommended_agent)
+- Knowledge (articles, confidence)
+- Account (user_data, subscription_data, user_is_blocked)
+- Tracking (agents_called, tools_used, current_step)
+- Decisions (requires_escalation, escalation_reason, can_auto_resolve)
+- Resolution (status, final_response, resolution_summary)
+Validation helpers ensure consistent state; `should_escalate(state)` gates escalation.
 
-**Decision criteria:**
-- Analyzes ticket content for keywords
-- Checks ticket metadata (urgency, user history)
-- Determines which specialist(s) to call
-- **Does NOT:** Directly resolve issues (delegates to workers)
+### Routing Logic (Highâ€‘Level)
+1. Supervisor receives a ticket.
+2. Supervisor may call Classifier to determine category/urgency or directly route based on content.
+3. If informational â†’ Knowledge; if account/subscription/reservations â†’ Account Ops; if complex/blocked/refund â†’ Escalation.
+4. Agents may handoff back to Supervisor; Supervisor decides next step or finish.
 
----
+### Diagram
+```mermaid
+flowchart TD
+    U[User Ticket] --> S[Supervisor]
+    S -->|classify| C[Classifier]
+    S -->|route| K[Knowledge]
+    S -->|route| A[Account Ops]
+    S -->|route| E[Escalation]
+    C -->|handoff| S
+    K -->|answer/handback| S
+    A -->|action/handback| S
+    K -->|low confidence| E
+    A -->|blocked/refund| E
+    E -->|create ticket| S
+    S --> R[(Resolution / Escalation)]
+```
 
-## Agent 2: Classifier Agent (optional but recommended)
+### Flow of Information & Decisionâ€‘Making
+1. User ticket and metadata arrive (text, user_id, channel).
+2. Supervisor classifies or routes directly based on content and prior context (longâ€‘term memory).
+3. Knowledge Agent retrieves articles; if confidence < threshold, recommends escalation.
+4. Account Ops Agent performs DB-backed operations; flags blocked/refund â†’ escalation.
+5. Escalation Agent creates a structured ticket and confirms handoff.
+6. Supervisor finalizes: returns grounded assistant response or escalation confirmation.
+7. Memory tools persist messages and status updates for future personalization.
 
-**Role:** Analyzes ticket and extracts:
-- Issue category (technical, billing, account, reservation)
-- Urgency level (low, medium, high, critical)
-- Required actions (lookup, modify, escalate)
+### Inputs & Outputs
+- **Inputs**:
+  - text (required): ticket content
+  - user_id (required): external user identifier
+  - ticket_id / thread_id (required): session identifier
+  - channel (optional): chat/email/other
+  - metadata (optional): urgency hints, category hints
+- **Outputs**:
+  - assistant_message (resolved) grounded in KB or tool results, or
+  - escalation_confirmation with ticket reference
+  - logs for routing, tools, decisions (JSON to `logs/agentic.log`)
 
-**Output:** Structured classification data for routing
+### Design Guarantees
+- Deterministic routing via Supervisor.
+- Transparent handoffs with backâ€‘handoff messages.
+- Inspectable session via `thread_id` and checkpointer.
 
-**Tools:** None (pure LLM reasoning)
-
----
-
-## Agent 3: Knowledge Retrieval Agent
-
-**Role:** Searches knowledge base for relevant articles
-
-**Tools:**
-- `search_knowledge_base(query, tags)` - finds articles
-
-**Logic:**
-- Performs semantic/keyword search
-- Scores relevance/confidence
-- If confidence > 0.7: returns article-based response
-- If confidence < 0.7: signals need for escalation
-
-**Output:** Response text OR escalation flag
-
----
-
-## Agent 4: Account Operations Agent
-
-**Role:** Performs database lookups and operations
-
-**Tools:**
-- `lookup_user_account(user_id)` - get user details
-- `check_subscription_status(user_id)` - subscription info
-- `get_user_reservations(user_id)` - active bookings
-- `cancel_reservation(reservation_id)` - cancel booking
-- `update_subscription(user_id, action)` - pause/cancel sub
-
-**Logic:** Executes when supervisor determines data lookup/action needed
-
-**Output:** Structured data or action confirmation
-
----
-
-## Agent 5: Escalation Agent
-
-**Role:** Handles cases requiring human intervention
-
-**Triggers:**
-- No knowledge article found
-- Confidence too low
-- User account blocked
-- Refund requests (policy exception)
-- Security concerns
-
-**Actions:**
-- Logs escalation reason
-- Summarizes ticket for human agent
-- Updates ticket status to "escalated"
-
-**Output:** Escalation summary
-
-
-
-## State Management
-
-### Workflow State Schema
-class SupportTicketState(MessagesState):
-    # Ticket Information
-    ticket_id: str
-    user_id: str
-    ticket_content: str
-    channel: str  # chat, email, phone
-    
-    # Classification Results
-    issue_category: Optional[str]  # technical, billing, etc.
-    urgency_level: Optional[str]   # low, medium, high, critical
-    
-    # Knowledge Retrieval
-    retrieved_articles: Optional[List[Dict]]
-    confidence_score: Optional[float]
-    
-    # Account Data
-    user_account_data: Optional[Dict]
-    
-    # Decision Tracking
-    current_agent: Optional[str]
-    agents_called: List[str]
-    tool_calls_made: List[Dict]
-    
-    # Resolution
-    resolution_status: str  # pending, resolved, escalated
-    final_response: Optional[str]
-    escalation_reason: Optional[str]
-
-
-    ## State Management
-
-### Workflow State Schema
-class SupportTicketState(MessagesState):
-    # Ticket Information
-    ticket_id: str
-    user_id: str
-    ticket_content: str
-    channel: str  # chat, email, phone
-    
-    # Classification Results
-    issue_category: Optional[str]  # technical, billing, etc.
-    urgency_level: Optional[str]   # low, medium, high, critical
-    
-    # Knowledge Retrieval
-    retrieved_articles: Optional[List[Dict]]
-    confidence_score: Optional[float]
-    
-    # Account Data
-    user_account_data: Optional[Dict]
-    
-    # Decision Tracking
-    current_agent: Optional[str]
-    agents_called: List[str]
-    tool_calls_made: List[Dict]
-    
-    # Resolution
-    resolution_status: str  # pending, resolved, escalated
-    final_response: Optional[str]
-    escalation_reason: Optional[str]
-ser_id (str)
-- **Output**: List of reservations with experience details
-- **Database**: cultpass.db -> reservations + experiences
-
-### cancel_reservation
-- **Purpose**: Cancel a reservation
-- **Input**: reservation_id (str)
-- **Output**: Success/failure + confirmation
-- **Database**: cultpass.db -> update reservation status
-
-## 4. Subscription Management Tools
-
-### update_subscription_status
-- **Purpose**: Pause or cancel subscription
-- **Input**: subscription_id (str), action ('pause'|'cancel')
-- **Output**: Updated subscription object
-- **Database**: cultpass.db -> subscriptions
+### Alignment With Rubric
+- Pattern: Supervisor with 4 specialized agents.
+- Routing decisions based on classification and ticket content.
+- Knowledge retrieval with confidence and escalation.
+- Tooling abstracts DB operations.
+- Memory via checkpointer and persistent DB.

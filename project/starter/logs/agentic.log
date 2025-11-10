@@ -1,0 +1,63 @@
+{"level": "INFO", "name": "workflow", "message": "Invoke supervisor", "time": "2025-11-10 18:45:07,720", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 18:45:10,505"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 18:45:12,825"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 18:45:15,077"}
+{"level": "INFO", "name": "workflow", "message": "Supervisor finished", "time": "2025-11-10 18:45:15,081", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:00:14,509"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:00:16,721"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:00:20,048"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:00:43,486"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:00:47,282"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:00:49,560"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:00:52,028"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:01:00,618"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:01:02,878"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:01:47,363"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:02:05,894"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:02:09,185"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:02:11,370"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:02:38,070"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:02:50,669"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:02:55,459"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:02:58,120"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:03:01,301"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:03:10,514"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 19:03:17,040"}
+{"level": "INFO", "name": "demo", "message": "demo_start", "time": "2025-11-10 22:05:07,780", "ticket_id": "thread-knowledge", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "workflow", "message": "ticket_start", "time": "2025-11-10 22:05:07,781", "ticket_id": "thread-knowledge", "user_id": "user-100", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:11,185"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:12,888"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:16,145"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:17,909"}
+{"level": "INFO", "name": "workflow", "message": "ticket_end", "time": "2025-11-10 22:05:17,914", "ticket_id": "thread-knowledge", "user_id": "user-100", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_end", "time": "2025-11-10 22:05:17,914", "ticket_id": "thread-knowledge", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_start", "time": "2025-11-10 22:05:17,914", "ticket_id": "thread-account", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "workflow", "message": "ticket_start", "time": "2025-11-10 22:05:17,914", "ticket_id": "thread-account", "user_id": "user-200", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:19,377"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:21,716"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:24,012"}
+{"level": "INFO", "name": "workflow", "message": "ticket_end", "time": "2025-11-10 22:05:24,017", "ticket_id": "thread-account", "user_id": "user-200", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_end", "time": "2025-11-10 22:05:24,017", "ticket_id": "thread-account", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_start", "time": "2025-11-10 22:05:24,017", "ticket_id": "thread-escalation", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "workflow", "message": "ticket_start", "time": "2025-11-10 22:05:24,017", "ticket_id": "thread-escalation", "user_id": "user-300", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:25,569"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:35,603"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:38,630"}
+{"level": "INFO", "name": "workflow", "message": "ticket_end", "time": "2025-11-10 22:05:38,635", "ticket_id": "thread-escalation", "user_id": "user-300", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_end", "time": "2025-11-10 22:05:38,635", "ticket_id": "thread-escalation", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_start", "time": "2025-11-10 22:05:38,635", "ticket_id": "thread-session", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "workflow", "message": "ticket_start", "time": "2025-11-10 22:05:38,635", "ticket_id": "thread-session", "user_id": "user-400", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:42,067"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:44,379"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:46,072"}
+{"level": "INFO", "name": "workflow", "message": "ticket_end", "time": "2025-11-10 22:05:46,077", "ticket_id": "thread-session", "user_id": "user-400", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_end", "time": "2025-11-10 22:05:46,077", "ticket_id": "thread-session", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_start", "time": "2025-11-10 22:05:46,077", "ticket_id": "thread-session", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "workflow", "message": "ticket_start", "time": "2025-11-10 22:05:46,077", "ticket_id": "thread-session", "user_id": "user-400", "agent": "supervisor", "status": "start"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:47,829"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:53,526"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:56,342"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:05:59,312"}
+{"level": "INFO", "name": "httpx", "message": "HTTP Request: POST https://openai.vocareum.com/v1/chat/completions \"HTTP/1.1 200 OK\"", "time": "2025-11-10 22:06:00,965"}
+{"level": "INFO", "name": "workflow", "message": "ticket_end", "time": "2025-11-10 22:06:00,971", "ticket_id": "thread-session", "user_id": "user-400", "agent": "supervisor", "status": "end"}
+{"level": "INFO", "name": "demo", "message": "demo_end", "time": "2025-11-10 22:06:00,971", "ticket_id": "thread-session", "agent": "supervisor", "status": "end"}
