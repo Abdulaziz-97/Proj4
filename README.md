@@ -176,19 +176,62 @@ Integration & Testing
 - Env not loading (Windows PowerShell)
   - Set per‑session: `$env:OPENAI_API_KEY="..."`  `$env:OPENAI_BASE_URL="..."`
 ---
+# Agentic Customer Support System
 
-Updated project/starter/agentic/workflow.py to build a create_supervisor(...).compile(...) graph with a shared ChatOpenAI, MemorySaver, and four agents: classifier, knowledge, account_ops, escalation.
-Added invoke_ticket(...) that enriches with long‑term history, runs with thread_id, persists messages/status via tools, and logs decisions.
-Fixed/added agents:
-Created project/starter/agentic/agents/classifier_agent.py.
-Fixed project/starter/agentic/agents/escalation_agent.py to use prompt= and name="escalation".
-Demos:
-Rewrote project/starter/scripts/run_demo.py to call invoke_ticket(...), demonstrate knowledge, account, escalation, and session continuity. Adjusted logging extras to avoid reserved keys.
-Added project/starter/scripts/memory_demo.py to show storing and then retrieving user history.
-Architecture doc:
-Expanded project/starter/agentic/design/architecture.md with Mermaid diagram, full Escalation section, end‑to‑end flow, inputs/outputs, and coherent state section.
-Logging:
-Enabled structured JSON logs via project/starter/agentic/logging_config.py to project/starter/logs/agentic.log.
+## Overview
+A multi-agent customer support system built with LangGraph that intelligently routes and resolves customer tickets using specialized agents.
+
+## Recent Updates
+
+### Core Workflow (`project/starter/agentic/workflow.py`)
+- Built supervisor graph using `create_supervisor(...).compile(...)` with:
+  - Shared `ChatOpenAI` LLM instance
+  - `MemorySaver` for session persistence
+  - Four specialized agents: classifier, knowledge, account_ops, escalation
+- Implemented `invoke_ticket(...)` function that:
+  - Enriches state with long-term user history
+  - Executes with thread-based session memory
+  - Persists messages and status via memory tools
+  - Logs all routing decisions
+
+### Agent Implementations
+
+#### Classifier Agent
+- **Created**: `project/starter/agentic/agents/classifier_agent.py`
+- Analyzes tickets and returns structured JSON with category, urgency, keywords, and routing recommendations
+
+#### Escalation Agent
+- **Fixed**: `project/starter/agentic/agents/escalation_agent.py`
+- Updated to use `prompt=` parameter and `name="escalation"` for proper supervisor integration
+
+### Demo Scripts
+
+#### Main Demo (`project/starter/scripts/run_demo.py`)
+- Completely rewritten to use `invoke_ticket(...)`
+- Demonstrates:
+  - Knowledge agent for informational queries
+  - Account operations for user-specific actions
+  - Escalation for complex issues
+  - Session continuity across multiple interactions
+- Fixed logging to avoid reserved key conflicts
+
+#### Memory Demo (`project/starter/scripts/memory_demo.py`)
+- Shows long-term memory persistence
+- Demonstrates storing interactions and retrieving user history
+
+### Documentation
+
+#### Architecture (`project/starter/agentic/design/architecture.md`)
+- Added comprehensive Mermaid workflow diagram
+- Expanded Escalation agent section with detailed capabilities
+- Documented end-to-end ticket flow
+- Clarified inputs/outputs for each component
+- Enhanced state management documentation
+
+### Logging Infrastructure
+- **Configured**: `project/starter/agentic/logging_config.py`
+- Outputs structured JSON logs to `project/starter/logs/agentic.log`
+- Enables detailed tracing of agent decisions and ticket lifecycle
 
 ## License
 For educational use. Verify third‑party model and API licenses prior to production use.
