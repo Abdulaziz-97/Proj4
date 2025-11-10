@@ -175,11 +175,6 @@ Integration & Testing
   - If using a custom provider, verify `OPENAI_BASE_URL`.
 - Env not loading (Windows PowerShell)
   - Set per‑session: `$env:OPENAI_API_KEY="..."`  `$env:OPENAI_BASE_URL="..."`
-- Encoding issues in console (Windows)
-  - Avoid non‑ASCII emojis in prints, or set terminal encoding to UTF‑8.
-- Python cache collisions
-  - Remove `__pycache__/` recursively and re‑run.
-
 ---
 
 ## License
