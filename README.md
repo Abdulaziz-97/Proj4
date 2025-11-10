@@ -177,5 +177,18 @@ Integration & Testing
   - Set per‑session: `$env:OPENAI_API_KEY="..."`  `$env:OPENAI_BASE_URL="..."`
 ---
 
+Updated project/starter/agentic/workflow.py to build a create_supervisor(...).compile(...) graph with a shared ChatOpenAI, MemorySaver, and four agents: classifier, knowledge, account_ops, escalation.
+Added invoke_ticket(...) that enriches with long‑term history, runs with thread_id, persists messages/status via tools, and logs decisions.
+Fixed/added agents:
+Created project/starter/agentic/agents/classifier_agent.py.
+Fixed project/starter/agentic/agents/escalation_agent.py to use prompt= and name="escalation".
+Demos:
+Rewrote project/starter/scripts/run_demo.py to call invoke_ticket(...), demonstrate knowledge, account, escalation, and session continuity. Adjusted logging extras to avoid reserved keys.
+Added project/starter/scripts/memory_demo.py to show storing and then retrieving user history.
+Architecture doc:
+Expanded project/starter/agentic/design/architecture.md with Mermaid diagram, full Escalation section, end‑to‑end flow, inputs/outputs, and coherent state section.
+Logging:
+Enabled structured JSON logs via project/starter/agentic/logging_config.py to project/starter/logs/agentic.log.
+
 ## License
 For educational use. Verify third‑party model and API licenses prior to production use.
